@@ -32,7 +32,7 @@ namespace SatsLogikParser
         public void changebool(int x, char[] alpha)
         {
             if (charvar == alpha[x])
-            { onoff = !onoff; Console.WriteLine("Changed the var " + alpha[x] + " with pos " + placement + " results: " + onoff); }
+            { onoff = !onoff; /*Console.WriteLine("Changed the var " + alpha[x] + " with pos " + placement + " results: " + onoff);*/ }
         }
     }
 }

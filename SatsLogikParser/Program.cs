@@ -74,7 +74,7 @@ namespace SatsLogikParser
                             varbools[x] = !varbools[x];
                             foreach (var z in Variables)
                             { z.changebool(x, alpha); }
-                            Console.WriteLine("Changing var " + alpha[x]);
+                            //Console.WriteLine("Changing var " + alpha[x]);
                         }
                         if (varbools[x] == true)
                         { number = 1; }
@@ -85,21 +85,23 @@ namespace SatsLogikParser
                         { currentswitch *= 2; }
                     }
                     resultat = 1;
-                    int tempint1 = -1;
-                    foreach (int x in operations)
+                    bool firstround = true;
+                    int tempint1 = 0;
+                    foreach (int x in operations)   //loopar igenom alla "operations" och utför en av metoderna som parsar tal beroende på vilken bokstav det är
                     {
                         int tempint2 = 0;
                         int currentz = 0;
                         resultat = 0;
-                        foreach (var z in Variables)
-                        {
-                            if (z.Placement == (x - 1) && tempint1 == -1)
+                        foreach (var z in Variables)    //hämtar klassen som ligger 1 steg framför/bakom operationen, om det inte är första gången så kommer resultat från
+                        {                               //tidigare operation vara boolen 1 steg framför operationen (x - 1). Detta är för att undvika att t.ex AvB^C inte slutar
+                            if (z.Placement == (x - 1) && firstround)   //upp som false om t.ex A = true, B = false och C = true | 1 | 0 | 1 | (B^C = false, vilket skickar false till resultatet
+                                                                        //trots A är sann i or operationen
                             { tempint1 = currentz; }
                             else if (z.Placement == (x + 1))
                             { tempint2 = currentz; }
                             currentz++;
                         }
-                        if (tempint1 == -1)
+                        if (firstround)
                         { tempbool1 = Variables[tempint1].Onoff; }
                         tempbool2 = Variables[tempint2].Onoff;
                         //Console.WriteLine(tempbool1 + "\n" + tempbool2);
@@ -111,7 +113,9 @@ namespace SatsLogikParser
                         { resultbool = ImplikationSats(tempbool1, tempbool2); }
                         else
                         { resultbool = EkvivalensSats(tempbool1, tempbool2); }
-                        //tempbool1 = resultbool; //testkod för att ta resultatet från tidigare ekvation och sätta in det som tempbool1 inför kommande ekvation, verkar inte fungera just nu
+                        if (i != 0)
+                        { tempbool1 = resultbool; } //testkod för att ta resultatet från tidigare ekvation och sätta in det som tempbool1 inför kommande ekvation, verkar inte fungera just nu
+                        firstround = false;
                     }
                     if (resultbool)
                     { resultat = 1; }
@@ -136,7 +140,7 @@ namespace SatsLogikParser
 
         public static bool DisjunktionSats(bool bool1, bool bool2)  //or/v
         {
-            Console.WriteLine(bool1 + "    " + bool2);
+            //Console.WriteLine(bool1 + "    " + bool2);
             if (bool1 || bool2)
             { return true; }
             return false;
